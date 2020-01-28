@@ -5,14 +5,12 @@ type state =
   | ErrorFetchingDogs
   | LoadedDogs(array(string));
 
+
 [@react.component]
 let make = () => {
   let (state, setState) = React.useState(() => LoadingDogs);
 
-  // Notice that instead of `useEffect`, we have `useEffect0`. See
-  // reasonml.github.io/reason-react/docs/en/components#hooks for more info
-  React.useEffect0(() => {
-    Js.Promise.(
+  let loadPicture = () => Js.Promise.(
       fetch("https://dog.ceo/api/breeds/image/random/1")
       |> then_(response => response##json())
       |> then_(jsonResponse => {
@@ -33,6 +31,12 @@ let make = () => {
     // for React components; but since folks do use them, we provide such an
     // example here. In reality, this fetch should just be a plain callback,
     // with a cancellation API
+
+
+  // Notice that instead of `useEffect`, we have `useEffect0`. See
+  // reasonml.github.io/reason-react/docs/en/components#hooks for more info
+  React.useEffect0(() => {
+    loadPicture();
     None;
   });
   <>
@@ -68,6 +72,6 @@ let make = () => {
          ->React.array
        }}
     </div>
-    <button> {React.string("New dog")} </button>
+    <button onClick={_event => loadPicture()}> {React.string("New dog")} </button>
   </>;
 };
